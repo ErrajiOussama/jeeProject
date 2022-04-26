@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template1"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Patients</title>
+</head>
+<body>
+<div layout:fragment="content1">
+    <div class="px-5">
+        <h3>Listes des patients</h3>
+        <div class="w-auto mx-auto">
+            <form class=" flex flex-row " method="get" th:action="@{/user/index}">
+                <input placeholder="Search..." th:value="${keyword}" type="text" name="keyword">
+                <button type="submit" class="btn btn-info">Search</button>
+            </form>
+        </div>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Date</th>
+                <th>Malade</th>
+                <th>Score</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p:${listPatients}">
+                <td th:text="${p.id}"></td>
+                <td th:text="${p.nom}"></td>
+                <td th:text="${p.dataNaissance}"></td>
+                <td th:text="${p.malade}"></td>
+                <td th:text="${p.score}"></td>
+                <td class="flex flex-row"
+                    sec:authorize="hasRole('ADMIN')">
+                    <a class="btn btn-danger"
+                       th:href="@{/admin/delete(id=${p.id}, keyword=${keyword}, page=${currentPage}, size=${size})}"
+                    >Delete</a>
+                    <a class="btn btn-secondary"
+                       th:href="@{/admin/editPatient(id=${p.id}, keyword=${keyword}, page=${currentPage}, size=${size})}"
+                    >Edit</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="mx-auto my-4 w-100 w-auto">
+            <ul class="d-flex flex-row nav nav-pills justify-content-center">
+                <li th:each="page, status:${pages}" >
+                    <a  th:text="${status.count}"
+                        th:class="${status.index==currentPage?'btn btn-primary mx-1':'btn btn-outline-primary mx-1'}"
+                        th:href="@{/user/index(page=${status.index}, keyword=${keyword}, size=${size})}"
+                    ></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>
